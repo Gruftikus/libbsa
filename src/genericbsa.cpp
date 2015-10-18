@@ -71,35 +71,35 @@ BsaAsset _bsa_handle_int::GetAsset(const std::string& assetPath) {
 }
 
 void _bsa_handle_int::GetMatchingAssets(const boost::regex& regex, std::list<BsaAsset>& matchingAssets) {
-    matchingAssets.clear();
-    for (std::list<BsaAsset>::iterator it = assets.begin(), endIt = assets.end(); it != endIt; ++it) {
-        if (boost::regex_match(it->path, regex))
-            matchingAssets.push_back(*it);
-    }
+	matchingAssets.clear();
+	for (std::list<BsaAsset>::iterator it = assets.begin(), endIt = assets.end(); it != endIt; ++it) {
+		if (boost::regex_match(it->path, regex))
+			matchingAssets.push_back(*it);
+	}
 }
 
 void _bsa_handle_int::Extract(const std::string& assetPath, uint8_t** _data, size_t* _size) {
-    //Get asset data.
-    BsaAsset data = GetAsset(assetPath);
-    if (data.path.empty())
-        throw error(LIBBSA_ERROR_FILESYSTEM_ERROR, "Path is empty.");
+	//Get asset data.
+	BsaAsset data = GetAsset(assetPath);
+	if (data.path.empty())
+		throw error(LIBBSA_ERROR_FILESYSTEM_ERROR, "Path is empty.");
 
 	std::pair<uint8_t*,size_t> dataPair;
-    try {
-        //Read file data.
-        libbsa::ifstream in(fs::path(filePath), ios::binary);
-        in.exceptions(ios::failbit | ios::badbit | ios::eofbit);  //Causes ifstream::failure to be thrown if problem is encountered.
+	try {
+		//Read file data.
+		libbsa::ifstream in(fs::path(filePath), ios::binary);
+		in.exceptions(ios::failbit | ios::badbit | ios::eofbit);  //Causes ifstream::failure to be thrown if problem is encountered.
 
-        dataPair = ReadData(in, data);
+		dataPair = ReadData(in, data);
 
 		*_data = dataPair.first;
 		*_size = dataPair.second;
 
-        in.close();
-    } catch (ios_base::failure& e) {
-        delete [] dataPair.first;
-        throw error(LIBBSA_ERROR_FILESYSTEM_ERROR, e.what());
-    }
+		in.close();
+	} catch (ios_base::failure& e) {
+		delete [] dataPair.first;
+		throw error(LIBBSA_ERROR_FILESYSTEM_ERROR, e.what());
+	}
 
 }
 

@@ -372,9 +372,16 @@ namespace libbsa { namespace tes4 {
             if (outSize & FILE_INVERT_COMPRESSED)  //Remove compression flag from size to get actual compressed size.
                 outSize ^= FILE_INVERT_COMPRESSED;
 
+			//check if file name is in the way
+			unsigned int skip_path = 0;
+			char delme[1000];
+			in.seekg(data.offset + 1, ios_base::beg);
+			in.read(delme, strlen(data.path.c_str()));
+			if (_strnicmp(delme, data.path.c_str(), strlen(data.path.c_str())) == 0)
+				skip_path = strlen(data.path.c_str()) + 1;
             //Get the uncompressed size.
             uint32_t uncompressedSize;
-            in.seekg(data.offset, ios_base::beg);
+            in.seekg(data.offset + skip_path, ios_base::beg);
             in.read((char*)&uncompressedSize, sizeof(uint32_t));
 
             //in and out are now at their starting locations for reading and writing, and we have the compressed and uncompressed size.
